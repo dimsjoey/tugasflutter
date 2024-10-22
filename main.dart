@@ -41,7 +41,16 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  
+  var favorites = <WordPair>[];
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
+  }
 }
 
 //membuat layout pada halaman HomePage
@@ -52,6 +61,13 @@ class MyHomePage extends StatelessWidget {
     var pair = appState.current;//variable pair menyimpan kata yang sedang tampil/aktif
     //di bawah ini adalah kode program untuk menyusut layout
 
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
     return Scaffold( //base (canvas) dari layout
       body: Center(
         child: Column( //di atas scaffold, ada body. Body-nya, diberi kolom
@@ -59,11 +75,26 @@ class MyHomePage extends StatelessWidget {
           children: [ //di dalam kolom, diberi teks
             BigCard(pair: pair), //mengambil nilai dari variable pair, lalu diubah menjadi huruf kecil semua, dan ditampilkan sebagai teks
             SizedBox(height: 10,),
-            ElevatedButton( //membuat button timbul di dalam body
-              onPressed: () { //fungsi yang dieksekusi ketika button di tekan 
-                appState.getNext(); //tampilan teks 'button pressed' di terminal saat button di tekan 
-              },
-              child: Text('Next'), //berikan text 'Next' pada button (sebagai child)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                
+                ElevatedButton.icon(
+                  onPressed: () {
+                    appState.toggleFavorite();
+                  },
+                  icon: Icon(icon),
+                  label: Text('Like'),
+                ),
+                SizedBox(width: 10),
+
+                ElevatedButton( //membuat button timbul di dalam body
+                  onPressed: () { //fungsi yang dieksekusi ketika button di tekan 
+                    appState.getNext(); //tampilan teks 'button pressed' di terminal saat button di tekan 
+                  },
+                  child: Text('Next'), //berikan text 'Next' pada button (sebagai child)
+                ),
+              ],
             ),
           ],
         ),
