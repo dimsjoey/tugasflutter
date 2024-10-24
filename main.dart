@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       //membuat satu state bernama MyAppState
       child: MaterialApp( // pada state ini, menggunakan style desain MaterialUI
         title: 'Namer App', //diberi judul Namer App
-        theme: ThemeData( //data tema aplikasi, diberi warna deepOrange
+        theme: ThemeData( //data tema aplikasi, diberi warna blue.shade200
           useMaterial3: true, //versi materialUI yang dipakai versi 3
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade200),
         ),
@@ -69,10 +69,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = GeneratorPage();
+        page = Placeholder();
         break;
       case 1:
-        page = Placeholder();
+        page = GeneratorPage();
+        break;
+      case 2:
+        page = FavoritesPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -86,6 +89,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: NavigationRail(
                   extended: Constraints.maxWidth >= 600,
                   destinations: [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.person), 
+                      label: Text('Profile'),
+                    ),
                     NavigationRailDestination(
                       icon: Icon(Icons.home),
                       label: Text('Home'),
@@ -113,6 +120,34 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         );
       }
+    );
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+    if (appState.favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+      );
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have '
+              '${appState.favorites.length} favorites:'),
+        ),
+        for (var pair in appState.favorites)
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(pair.asLowerCase),
+          ),
+      ],
     );
   }
 }
